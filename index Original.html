@@ -1,0 +1,90 @@
+
+<html>
+<head>
+  <title>A D3 map</title>
+  <script src='https://d3js.org/d3.v4.min.js'></script>
+  <script src='neighborhoods.js'></script>
+</head>
+<body>
+  <script>
+  
+ var rn =function ()
+{
+	return Math.floor((Math.random() * 80) + 1);
+};
+
+var width = 700,
+    height = 580;
+
+var svg2= d3.select('body')
+  .append('svg')
+  .attr('width', width)
+  .attr('height', height);
+
+var g2 = svg2.append('g');
+
+var albersProjection = d3.geoAlbers()
+  .scale(70000)
+  .rotate([95.32, 0])
+  .center([0, 29.73])
+  .translate([width/2, height/2]);
+
+var geoPath = d3.geoPath()
+    .projection(albersProjection);
+
+g2.selectAll('path')
+  .data(neighborhoods_json.features)
+  .enter()
+  .append('path')
+  .attr('fill', '#ccc')
+  .attr('d', geoPath)
+  .on("mouseover", function(d){
+		console.log(d.properties.name);
+		d3.select(this).attr("fill","orange");
+	})
+  .on("mouseout", function(d,i){
+		d3.select(this).attr("fill","#ccc");
+	})
+  ;
+  
+
+var puntos = [];
+var unos = neighborhoods_json.features;
+unos.forEach(function(d,i){
+	var maxY = -100,minY = 100,maxX = -100,minX = 100;
+	d.geometry.coordinates.forEach(function(d1, i1){
+		if(d1[0][0][0]>maxX){maxX = d1[0][0][0]};
+		if(d1[0][0][0]<minX){minX = d1[0][0][0]};
+		if(d1[0][0][1]>maxY){maxY = d1[0][0][1]};
+		if(d1[0][0][1]<minY){minY = d1[0][0][1]};
+	});
+	puntos.push({name: d.properties.name, cartodb_id : d.properties.cartodb_id, x: (maxX + minX)/2, y: (maxY + minY)/2, datos:[rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn], maxs:[rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn,rn]});
+});
+
+
+var features = [];
+var posi = 0;
+puntos.forEach(function(d,i){
+	features.push({type:"Feature",
+				    properties: { name: d.name, cartodb_id: d.cartodb_id}, geometry: {type: "LineString", coordinates : [[d.x,d.y],[d.x,d.y + 0.025]]}, datos : d.datos, maxs : d.maxs});
+});
+
+var rodents = svg2.append('g');
+
+rodents.selectAll('path')
+  .data(features)
+  .enter()
+  .append('path')
+  .attr('fill', '#900')
+  .attr('stroke', '#900')
+  .attr('stroke-width', '2')
+  .attr('d', geoPath);
+
+
+
+  </script>
+</body>
+</html>
+			
+
+				
