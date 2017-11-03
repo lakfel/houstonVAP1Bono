@@ -172,6 +172,7 @@ g2.selectAll('path')
 		d3.select("#tdNumeroWard").node().innerHTML="";
 		d3.select("#tdNombreWard").node().innerHTML="";
 		var valor = d3.select("#ifecha").node().value;
+		updateLine(-1);
 		if(features[i].datos[valor] > 0)
 		{
 			if(features[i].datos[valor] <= 0.01)
@@ -465,16 +466,21 @@ function updateLine(numWard)
   var t = d3.transition()
     .duration(450)
     .ease(d3.easeLinear);
-
-  gl.select("path")
-      .datum(features[numWard].datos)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-linecap", "round")
-      .attr("stroke-width", 1.5)
-	  .transition(t)
-      .attr("d", line);
+ 
+  if(numWard == -1)
+	gl.select("path")
+		.transition()
+		.attr("stroke-width", 0);
+  else
+	  gl.select("path")
+		  .datum(features[numWard].datos)
+		  .attr("fill", "none")
+		  .attr("stroke", "steelblue")
+		  .attr("stroke-linejoin", "round")
+		  .attr("stroke-linecap", "round")
+		  .transition(t)
+		  .attr("stroke-width", 1.5)
+		  .attr("d", line);
 };
   
   </script>
