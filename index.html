@@ -189,11 +189,13 @@ g2.selectAll('path')
 	.on("click", function(d,i){
 		
 		var nPath = d3.select("#path_"+i);
+		var nPathText = d3.select("#text_path_"+i);
 		if(!nPath.empty())
 		{
 			d3.select(this)
 			  .attr("stroke-width", 3);
 			nPath.remove()
+			nPathText.remove();
 		}
 		else
 		{
@@ -214,6 +216,7 @@ g2.selectAll('path')
 			  ;
 			
 			  gl.append("text")
+			  .attr("id","text_path_"+i)
 			  .attr("x", x(14))
 			  .attr("y", y(features[i].datos[14]) )
 			  .text(features[i].properties.name)
@@ -305,8 +308,8 @@ d3.select("#ifecha").on("input",function(){
  
  update(0);
  
-  var svgLine = d3.select("#trLineChart").append("svg").attr("id","svgLineChart").attr("width","1000").attr("height","400"),
-    margin = {top: 5, right: 105, bottom: 100, left: 5},
+  var svgLine = d3.select("#trLineChart").append("svg").attr("id","svgLineChart").attr("width","1050").attr("height","400"),
+    margin = {top: 5, right: 155, bottom: 100, left: 5},
     width = +svgLine.attr("width") - margin.left - margin.right,
     height = +svgLine.attr("height") - margin.top - margin.bottom,
     gl = svgLine.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
