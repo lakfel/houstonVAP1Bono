@@ -4,7 +4,14 @@
   <title>A D3 map</title>
   <script src='https://d3js.org/d3.v4.min.js'></script>
   <script src='http://colorbrewer2.org/export/colorbrewer.js'></script>
-  <script src='https://d3js.org/d3-scale-chromatic.v0.3.min.js'></script>
+  <script src='https://d3js.org/d3-scale-chromatic.v0.3.min.js'></script>	  
+	<script src="https://d3js.org/d3-color.v1.min.js"></script>
+	<script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+	<script src="https://d3js.org/d3-ease.v1.min.js"></script>
+	<script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+	<script src="https://d3js.org/d3-selection.v1.min.js"></script>
+	<script src="https://d3js.org/d3-timer.v1.min.js"></script>
+	<script src="https://d3js.org/d3-transition.v1.min.js"></script>
   <script src='neighborhoods.js'></script>
 </head>
 <body>
@@ -303,8 +310,14 @@ d3.select("#ifecha").on("input",function(){
 			attr("fill","#ccc");
 		}
 	});
+	
+	var t = d3.transition()
+    .duration(750)
+    .ease(d3.easeLinear);
+	
 	rodents.selectAll('path')
 	  .data(features)
+	  .transition(t)
 	  .attr('fill', '#900')
 	  .attr('stroke', '#900')
 	  .attr('stroke-width', '2')
