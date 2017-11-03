@@ -284,36 +284,47 @@ d3.select("#ifecha").on("input",function(){
 		.datum([0,0.3])
 		.attr("d",lineMarker);
 	
+	var t = d3.transition()
+    .duration(750)
+    .ease(d3.easeLinear);
+	
+	
+	var t2 = d3.transition()
+    .duration(850)
+    .ease(d3.easeLinear);
+	
     features.forEach(function(d,i){
 		d.geometry.coordinates[1][1]=d.geometry.coordinates[0][1] + d.datos[valor];
 		if(d.datos[valor] > 0)
 		{
 			if(d.datos[valor] <= 0.01)
 			{
-				d3.select("#ward_"+d.properties.cartodb_id).
-				attr("fill","#b4c5e8");
+				d3.select("#ward_"+d.properties.cartodb_id)
+				.transition(t2)
+				.attr("fill","#b4c5e8");
 			}
 			else if(d.datos[valor] <= 0.02)
 			{
-				d3.select("#ward_"+d.properties.cartodb_id).
-				attr("fill","#83a2e2");
+				d3.select("#ward_"+d.properties.cartodb_id)
+				.transition(t2)
+				.attr("fill","#83a2e2");
 			}
 			else
 			{
-				d3.select("#ward_"+d.properties.cartodb_id).
+				d3.select("#ward_"+d.properties.cartodb_id)
+				.transition(t2).
 				attr("fill","#3a70e0");
 			}
 		}
 		else
 		{
 			d3.select("#ward_"+features[i].properties.cartodb_id).
+			transition(t2).
 			attr("fill","#ccc");
 		}
 	});
 	
-	var t = d3.transition()
-    .duration(750)
-    .ease(d3.easeLinear);
+	
 	
 	rodents.selectAll('path')
 	  .data(features)
@@ -409,7 +420,9 @@ function updateLine(numWard)
   //x.domain(d3.extent(fchas, function(d){return d}));
   //y.domain(d3.extent(features[numWard].datos, function(d) { return d; }));
 
-  
+  var t = d3.transition()
+    .duration(450)
+    .ease(d3.easeLinear);
 
   gl.select("path")
       .datum(features[numWard].datos)
@@ -418,6 +431,7 @@ function updateLine(numWard)
       .attr("stroke-linejoin", "round")
       .attr("stroke-linecap", "round")
       .attr("stroke-width", 1.5)
+	  .transition(t)
       .attr("d", line);
 };
   
