@@ -211,8 +211,16 @@ g2.selectAll('path')
 			propio
 			  .transition(t)
 			  .attr("stroke-width", "0");
-			nPath.transition(t).remove();
-			nPathText.transition(t).remove();
+			nPath
+				.datum([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+				.transition(t)
+				.attr("d",line)
+				.remove();
+			nPathText
+				.transition(t)
+				.attr("x",x(15))
+				.attr("y",y(0))
+				.remove();
 		}
 		else
 		{
@@ -222,7 +230,7 @@ g2.selectAll('path')
 			  .attr("stroke-width", "6");
 			gl.append("path")
 			  .attr("id","path_" + i)
-			  .datum(features[i].datos)
+			  .datum([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
 			  .attr("fill", "none")
 			  .attr("stroke",  sequentialScale(i))
 			  .attr("stroke-linejoin", "round")
@@ -231,14 +239,36 @@ g2.selectAll('path')
 			  .attr("d", line)
 			  .on("mouseout", function(d){ d3.select(this).attr("stroke-width", 2.5);})
 			  .on("mouseover", function(d){ d3.select(this).attr("stroke-width", 4.5);})
-			  .on("click", function(d){ d3.select(this).transition(t).remove();d3.select("#text_path_"+i).transition(t).remove();propio
-			  .transition(t)
-			  .attr("stroke", "black")
-			  .attr("stroke-width", "0");})
+			  .on("click", function(d){ 
+					var tt = d3.transition()
+						.duration(750)
+						.ease(d3.easeLinear);
+					d3.select(this)
+						.datum([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
+						.transition(tt)
+						.attr("d",line)
+						.remove();
+					d3.select("#text_path_"+i)
+						.transition(tt)
+						.attr("x", x(15))
+						.attr("y", y(0) )
+						.remove();
+					propio
+					  .transition(tt)
+					  .attr("stroke", "black")
+					  .attr("stroke-width", "0");})
 			  ;
+			
+			d3.select("#path_" + i)
+				.datum(features[i].datos)
+				.transition(t)
+				.attr("d",line);
 			
 			  gl.append("text")
 			  .attr("id","text_path_"+i)
+			  .attr("x", x(15))
+			  .attr("y", y(0) )
+			  .transition(t)
 			  .attr("x", x(14))
 			  .attr("y", y(features[i].datos[14]) )
 			  .text(features[i].properties.name)
