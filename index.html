@@ -3,6 +3,8 @@
 <head>
   <title>A D3 map</title>
   <script src='https://d3js.org/d3.v4.min.js'></script>
+  <script src='http://colorbrewer2.org/export/colorbrewer.js'></script>
+  <script src='https://d3js.org/d3-scale-chromatic.v0.3.min.js'></script>
   <script src='neighborhoods.js'></script>
 </head>
 <body>
@@ -17,38 +19,7 @@
 			</td>
 		</tr>
 		
-		<tr>
-			<td style="width:100">
-				<p>
-					<strong>Fecha Seleccionada:</p>
-				</p>
-				<p id="fechaSeleccionada">
-				
-				</p>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<input id= "ifecha" type="Range" max="14" min ="0" value = "0" step = "1" style="width:700" list="steplist">
-				<datalist id="steplist">
-					<option>01/10/2017 AM</option>
-					<option>01/10/2017 PM</option>	
-					<option>02/10/2017 AM</option>
-					<option>02/10/2017 PM</option>
-					<option>03/10/2017 AM</option>
-					<option>03/10/2017 PM</option>
-					<option>04/10/2017 AM</option>
-					<option>04/10/2017 PM</option>
-					<option>05/10/2017 AM</option>
-					<option>05/10/2017 PM</option>
-					<option>06/10/2017 AM</option>
-					<option>06/10/2017 PM</option>
-					<option>07/10/2017 AM</option>
-					<option>07/10/2017 PM</option>
-					<option>08/10/2017 AM</option>
-				</datalist>
-			<td>
-		</tr>
+		
 		<tr>
 			<td id="map">
 			</td>
@@ -83,6 +54,38 @@
 							</tr>
 						</table>
 					</tr>
+					<tr>
+			<td style="width:100">
+				<p>
+					<strong>Fecha Seleccionada:</p>
+				</p>
+				<p id="fechaSeleccionada">
+				
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input id= "ifecha" type="Range" max="14" min ="0" value = "0" step = "1" style="width:910" list="steplist">
+				<datalist id="steplist">
+					<option>01/10/2017 AM</option>
+					<option>01/10/2017 PM</option>	
+					<option>02/10/2017 AM</option>
+					<option>02/10/2017 PM</option>
+					<option>03/10/2017 AM</option>
+					<option>03/10/2017 PM</option>
+					<option>04/10/2017 AM</option>
+					<option>04/10/2017 PM</option>
+					<option>05/10/2017 AM</option>
+					<option>05/10/2017 PM</option>
+					<option>06/10/2017 AM</option>
+					<option>06/10/2017 PM</option>
+					<option>07/10/2017 AM</option>
+					<option>07/10/2017 PM</option>
+					<option>08/10/2017 AM</option>
+				</datalist>
+			<td>
+		</tr>
 					<tr >
 						<td id = "trLineChart">
 						
@@ -205,7 +208,7 @@ g2.selectAll('path')
 			  .attr("id","path_" + i)
 			  .datum(features[i].datos)
 			  .attr("fill", "none")
-			  .attr("stroke", "orange")
+			  .attr("stroke",  sequentialScale(i))
 			  .attr("stroke-linejoin", "round")
 			  .attr("stroke-linecap", "round")
 			  .attr("stroke-width", 2.5)
@@ -270,6 +273,10 @@ d3.select("#ifecha").on("input",function(){
 		
 	d3.select("#fechaSeleccionada").node().innerHTML= fecha;
 	
+	d3.select("#lineMarker")
+		.datum([0,0.3])
+		.attr("d",lineMarker);
+	
     features.forEach(function(d,i){
 		d.geometry.coordinates[1][1]=d.geometry.coordinates[0][1] + d.datos[valor];
 		if(d.datos[valor] > 0)
@@ -306,6 +313,10 @@ d3.select("#ifecha").on("input",function(){
    
  }
  
+ var sequentialScale = d3.scaleSequential()
+  .domain([0, 100])
+  .interpolator(d3.interpolateRainbow);
+ 
  update(0);
  
   var svgLine = d3.select("#trLineChart").append("svg").attr("id","svgLineChart").attr("width","1050").attr("height","400"),
@@ -335,8 +346,8 @@ var line = d3.line()
     .x(function(d,i) { return x(i); })
     .y(function(d) { return y(d); });
 	
-var lineStrong = d3.line()
-    .x(function(d,i) { return x(i); })
+var lineMarker = d3.line()
+    .x(function(d,i) { return x(d3.select("#ifecha").node().value); })
     .y(function(d) { return y(d); });
 
 gl.append("g")
@@ -370,6 +381,14 @@ gl.append("g")
       .attr("stroke-linecap", "round")
       .attr("stroke-width", 1.5)
       ;
+	
+	gl.append("path")
+	  .attr("id","lineMarker")
+	  .attr("fill", "none")
+      .attr("stroke", "red")
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-linecap", "round")
+      .attr("stroke-width", 1.5)
 	
 function updateLine(numWard)
 {
