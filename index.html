@@ -197,7 +197,7 @@ g2.selectAll('path')
 		{
 			d3.select(this)
 			  .attr("stroke-width", 3);
-			nPath.remove()
+			nPath.remove();
 			nPathText.remove();
 		}
 		else
@@ -215,7 +215,7 @@ g2.selectAll('path')
 			  .attr("d", line)
 			  .on("mouseout", function(d){ d3.select(this).attr("stroke-width", 2.5);})
 			  .on("mouseover", function(d){ d3.select(this).attr("stroke-width", 4.5);})
-			  .on("click", function(d){ d3.select(this).remove();})
+			  .on("click", function(d){ d3.select(this).remove();d3.select("#text_path_"+i).remove();})
 			  ;
 			
 			  gl.append("text")
