@@ -63,7 +63,7 @@
 								</br>
 								Con la barra de desplazamiento puede observar la evolución de los niveles de inundación en los barrios a lo largo del tiempo
 								</br>
-								Por último, al desplazarse sobre un ward específico. Un barchart en la parte de abajo muestra la evolución de inundación a lo largo del tiempo.
+								Por último, al desplazarse sobre un ward específico. Un barchart en la parte de abajo muestra la evolución de inundación a lo largo del tiempo.	Al darle click al ward,puede dejar fija la serie en el gráfic inferior. Para eliminar la serie, haga click nuevamente en el ward, o en la línea
 							</p>
 						</td>
 					</tr>
@@ -119,6 +119,7 @@ var albersProjection = d3.geoAlbers()
 var geoPath = d3.geoPath()
     .projection(albersProjection);
 
+	
 g2.selectAll('path')
   .data(neighborhoods_json.features)
   .enter()
@@ -157,6 +158,9 @@ g2.selectAll('path')
 		
 	})
   .on("mouseout", function(d,i){
+		d3.select("#tdsStuaciónWard").node().innerHTML =  "";
+		d3.select("#tdNumeroWard").node().innerHTML="";
+		d3.select("#tdNombreWard").node().innerHTML="";
 		var valor = d3.select("#ifecha").node().value;
 		if(features[i].datos[valor] > 0)
 		{
@@ -180,6 +184,39 @@ g2.selectAll('path')
 		{
 			d3.select("#ward_"+features[i].properties.cartodb_id).
 			attr("fill","#ccc");
+		}
+	})
+	.on("click", function(d,i){
+		
+		var nPath = d3.select("#path_"+i);
+		if(!nPath.empty())
+		{
+			d3.select(this)
+			  .attr("stroke-width", 3);
+			nPath.remove()
+		}
+		else
+		{
+			d3.select(this)
+			  .attr("stroke-width", 0);
+			gl.append("path")
+			  .attr("id","path_" + i)
+			  .datum(features[i].datos)
+			  .attr("fill", "none")
+			  .attr("stroke", "orange")
+			  .attr("stroke-linejoin", "round")
+			  .attr("stroke-linecap", "round")
+			  .attr("stroke-width", 2.5)
+			  .attr("d", line)
+			  .on("mouseout", function(d){ d3.select(this).attr("stroke-width", 2.5);})
+			  .on("mouseover", function(d){ d3.select(this).attr("stroke-width", 4.5);})
+			  .on("click", function(d){ d3.select(this).remove();})
+			  ;
+			
+			  gl.append("text")
+			  .attr("x", x(14))
+			  .attr("y", y(features[i].datos[14]) )
+			  .text(features[i].properties.name)
 		}
 	})
   ;
@@ -268,8 +305,8 @@ d3.select("#ifecha").on("input",function(){
  
  update(0);
  
-  var svgLine = d3.select("#trLineChart").append("svg").attr("id","svgLineChart").attr("width","900").attr("height","400"),
-    margin = {top: 5, right: 5, bottom: 100, left: 5},
+  var svgLine = d3.select("#trLineChart").append("svg").attr("id","svgLineChart").attr("width","1000").attr("height","400"),
+    margin = {top: 5, right: 105, bottom: 100, left: 5},
     width = +svgLine.attr("width") - margin.left - margin.right,
     height = +svgLine.attr("height") - margin.top - margin.bottom,
     gl = svgLine.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -287,11 +324,15 @@ d3.select("#ifecha").on("input",function(){
 	 var fchas = [];
  for(i = 1; i <=  15 ; i+=2)
  {
-	fchas.push(i + "/10/2017 10:00");
-	fchas.push(i + "/10/2017 23:00");
+	fchas.push(Math.floor((i+1)/2) + "/10/2017 10:00");
+	fchas.push(Math.floor((i+1)/2)	 + "/10/2017 23:00");
  }
 	
 var line = d3.line()
+    .x(function(d,i) { return x(i); })
+    .y(function(d) { return y(d); });
+	
+var lineStrong = d3.line()
     .x(function(d,i) { return x(i); })
     .y(function(d) { return y(d); });
 
